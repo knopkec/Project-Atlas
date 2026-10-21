@@ -29,8 +29,10 @@ A consultant-copilot tool that captures the core of an onboarding engagement as 
 - **One seam for testing**: the HTTP API. Tests cross the seam with FastAPI's test client and assert external behaviour only. Unit tests are reserved for behaviour not reachable over HTTP.
 - **The Department is the integration unit**: workflows, meetings, problems, stakeholders, and adoption risks all belong to a Department; a Hospital contains many Departments. (See ADR-0001.)
 - **Extraction is manual and structured, behind a seam**: the prototype accepts structured, human-entered extraction results. The extraction is exposed as a clearly-defined boundary so a future LLM extractor can be substituted without touching the rest of the model. (See ADR-0002.)
-- **Entities in this slice**: Hospital, Department, Meeting, Transcript, Workflow, Problem, Stakeholder, Adoption Risk. Software, Local AI Server, Existing Software, Recommendation, Configuration, and Lesson Learned are out of scope for this slice.
+- **Entities in this slice**: Hospital, Department, Meeting, Workflow, Problem, Stakeholder, Adoption Risk. The transcript is modelled as a `transcript` text field on `Meeting` (not a separate `Transcript` entity) — one transcript per meeting, split out later only if transcripts gain their own lifecycle. Software, Local AI Server, Existing Software, Recommendation, Configuration, and Lesson Learned are out of scope for this slice.
+- **Stakeholders are reusable**: a stakeholder is created once under a department (name + role) and linked to the meetings they attend, so the same person is recognisably the same across meetings. Linking is validated to stay within the same department.
 - **Identifiers**: every entity has a stable unique identifier returned by the API, used by clients and by future slices to link entities.
+- **Cross-department integrity**: extracted items (problems linking workflows, stakeholders linking meetings) are validated to belong to the same department, rejecting cross-department references with 404.
 - **Keep it simple, avoid premature optimisation**: no caching, no background jobs, no auth in this slice. Synchronous SQL via a thin data-access layer is sufficient.
 
 ## Testing Decisions

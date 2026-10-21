@@ -33,6 +33,13 @@ def _get_department_or_404(db: Session, department_id: uuid.UUID) -> models.Depa
     return department
 
 
+def _get_or_404(db: Session, model, entity_id: uuid.UUID, label: str):
+    entity = db.get(model, entity_id)
+    if entity is None:
+        raise HTTPException(status_code=404, detail=f"{label} not found")
+    return entity
+
+
 # --- Workflow ---
 
 
@@ -83,6 +90,12 @@ def record_problem(
     db: Session = Depends(get_db),
 ):
     meeting = _get_meeting_or_404(db, meeting_id)
+    if payload.workflow_id is not None:
+        workflow = _get_or_404(db, models.Workflow, payload.workflow_id, "Workflow")
+        if workflow.department_id != meeting.department_id:
+            raise HTTPException(
+                status_code=404, detail="Workflow not found for this department"
+            )
     problem = models.Problem(
         title=payload.title,
         description=payload.description,
@@ -193,9 +206,11 @@ def link_stakeholder(
     db: Session = Depends(get_db),
 ):
     meeting = _get_meeting_or_404(db, meeting_id)
-    stakeholder = db.get(models.Stakeholder, payload.stakeholder_id)
-    if stakeholder is None:
-        raise HTTPException(status_code=404, detail="Stakeholder not found")
+    stakeholder = _get_or_404(db, models.Stakeholder, payload.stakeholder_id, "Stakeholder")
+    if stakeholder.department_id != meeting.department_id:
+        raise HTTPException(
+            status_code=404, detail="Stakeholder not found for this department"
+        )
     if stakeholder not in meeting.stakeholders:
         meeting.stakeholders.append(stakeholder)
         db.commit()
@@ -209,3 +224,26 @@ def link_stakeholder(
 def list_meeting_stakeholders(meeting_id: uuid.UUID, db: Session = Depends(get_db)):
     meeting = _get_meeting_or_404(db, meeting_id)
     return meeting.stakeholders
+
+
+# --- Read-by-id ---
+
+
+@router.get("/workflows/{workflow_id}", response_model=schemas.WorkflowRead)
+def get_workflow(workflow_id: uuid.UUID, db: Session = Depends(get_db)):
+    return _get_or_404(db, models.Workflow, workflow_id, "Workflow")
+
+
+@router.get("/problems/{problem_id}", response_model=schemas.ProblemRead)
+def get_problem(problem_id: uuid.UUID, db: Session = Depends(get_db)):
+    return _get_or_404(db, models.Problem, problem_id, "Problem")
+
+
+@router.get("/adoption-risks/{risk_id}", response_model=schemas.AdoptionRiskRead)
+def get_adoption_risk(risk_id: uuid.UUID, db: Session = Depends(get_db)):
+    return _get_or_404(db, models.AdoptionRisk, risk_id, "Adoption risk")
+
+
+@router.get("/stakeholders/{stakeholder_id}", response_model=schemas.StakeholderRead)
+def get_stakeholder(stakeholder_id: uuid.UUID, db: Session = Depends(get_db)):
+    return _get_or_404(db, models.Stakeholder, stakeholder_id, "Stakeholder")
