@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OWC Consultant Copilot</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">OWC <span>Consultant Copilot</span></div>
+    <div class="tagline">Capture implementation knowledge, reuse it later.</div>
+  </header>
+
+  <main class="layout">
+    <!-- Column 1: Hospitals -->
+    <section class="panel">
+      <h2>1 · Hospital</h2>
+      <form id="hospital-form" class="inline-form">
+        <input id="hospital-name" placeholder="e.g. Klinikum Südstadt" required />
+        <button type="submit">Add</button>
+      </form>
+      <ul id="hospital-list" class="list"></ul>
+    </section>
+
+    <!-- Column 2: Departments -->
+    <section class="panel" id="department-panel">
+      <h2>2 · Department <span class="muted" id="hospital-context"></span></h2>
+      <p class="hint" id="department-hint">Select a hospital first.</p>
+      <form id="department-form" class="inline-form hidden">
+        <input id="department-name" placeholder="e.g. Radiology Doctors" required />
+        <button type="submit">Add</button>
+      </form>
+      <ul id="department-list" class="list"></ul>
+    </section>
+
+    <!-- Column 3: Meetings -->
+    <section class="panel" id="meeting-panel">
+      <h2>3 · Meeting <span class="muted" id="department-context"></span></h2>
+      <p class="hint" id="meeting-hint">Select a department first.</p>
+      <form id="meeting-form" class="stacked-form hidden">
+        <input id="meeting-title" placeholder="Meeting title (e.g. Kickoff)" required />
+        <textarea id="meeting-transcript" placeholder="Transcript / notes…" rows="5"></textarea>
+        <button type="submit">Record meeting</button>
+      </form>
+      <ul id="meeting-list" class="list"></ul>
+    </section>
+
+    <!-- Column 4: Extraction -->
+    <section class="panel" id="extraction-panel">
+      <h2>4 · Extract <span class="muted" id="meeting-context"></span></h2>
+      <p class="hint" id="extraction-hint">Select a meeting first.</p>
+      <div id="extraction-forms" class="hidden">
+        <form id="workflow-form" class="stacked-form">
+          <label>Workflow (current process)</label>
+          <textarea id="workflow-description" placeholder="e.g. Reports are typed up manually…" rows="2"></textarea>
+          <button type="submit">Add workflow</button>
+        </form>
+        <form id="problem-form" class="stacked-form">
+          <label>Problem / pain point</label>
+          <input id="problem-title" placeholder="Title (e.g. Manual reporting is slow)" required />
+          <textarea id="problem-description" placeholder="Description…" rows="2"></textarea>
+          <button type="submit">Add problem</button>
+        </form>
+        <form id="risk-form" class="stacked-form">
+          <label>Adoption risk</label>
+          <input id="risk-title" placeholder="Title (e.g. No time to learn)" required />
+          <textarea id="risk-description" placeholder="Description…" rows="2"></textarea>
+          <button type="submit">Add risk</button>
+        </form>
+        <form id="stakeholder-form" class="stacked-form">
+          <label>Stakeholder</label>
+          <input id="stakeholder-name" placeholder="Name (e.g. Dr. Weber)" required />
+          <input id="stakeholder-role" placeholder="Role (e.g. Department head)" />
+          <button type="submit">Add stakeholder</button>
+        </form>
+        <div class="recorded" id="recorded"></div>
+      </div>
+    </section>
+  </main>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
