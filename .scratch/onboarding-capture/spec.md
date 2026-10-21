@@ -25,7 +25,7 @@ A consultant-copilot tool that captures the core of an onboarding engagement as 
 
 ## Implementation Decisions
 
-- **Tech stack**: FastAPI backend, PostgreSQL with the pgvector extension enabled, Pydantic models, Alembic for migrations.
+- **Tech stack**: FastAPI backend, Pydantic models, Alembic for migrations, SQLAlchemy. The prototype stores data in local SQLite (see ADR-0004); PostgreSQL with pgvector is the production target, reached by setting `DATABASE_URL`.
 - **One seam for testing**: the HTTP API. Tests cross the seam with FastAPI's test client and assert external behaviour only. Unit tests are reserved for behaviour not reachable over HTTP.
 - **The Department is the integration unit**: workflows, meetings, problems, stakeholders, and adoption risks all belong to a Department; a Hospital contains many Departments. (See ADR-0001.)
 - **Extraction is manual and structured, behind a seam**: the prototype accepts structured, human-entered extraction results. The extraction is exposed as a clearly-defined boundary so a future LLM extractor can be substituted without touching the rest of the model. (See ADR-0002.)

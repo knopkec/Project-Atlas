@@ -1,0 +1,3 @@
+# SQLite for the prototype, Postgres+pgvector for production
+
+The prototype stores data in a local SQLite file (`owc.db`) instead of the PostgreSQL + pgvector stack named in the original architecture. Chosen because a live database server is out of scope at prototype stage: SQLite needs zero install, keeps the SQLAlchemy + Alembic + relational model intact, and the database URL is already configuration-driven, so swapping to PostgreSQL later is a one-line change (`DATABASE_URL`). pgvector is deferred with it — at prototype scale embeddings can be compared in-process (or via sqlite-vec), and the production target remains PostgreSQL with pgvector.

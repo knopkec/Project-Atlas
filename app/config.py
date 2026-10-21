@@ -6,7 +6,9 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 
-    database_url: str = "postgresql+psycopg://postgres:postgres@localhost:5432/owc"
+    # Prototype uses a local SQLite file; swap to Postgres+pgvector in production
+    # by setting DATABASE_URL (see .env.example).
+    database_url: str = "sqlite:///./owc.db"
 
 
 settings = Settings()

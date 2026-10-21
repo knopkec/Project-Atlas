@@ -10,6 +10,10 @@ build/
 # Environment
 .env
 
+# Local databases
+*.db
+*.sqlite3
+
 # Test / cache
 .pytest_cache/
 .coverage
