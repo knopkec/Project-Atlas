@@ -2,7 +2,10 @@
 
 from fastapi import FastAPI
 
+from app.routers import hospitals
+
 app = FastAPI(title="OWC Consultant Copilot")
+app.include_router(hospitals.router)
 
 
 @app.get("/health")
