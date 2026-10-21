@@ -2,7 +2,7 @@
 
 import uuid
 
-from sqlalchemy import ForeignKey, String, Uuid
+from sqlalchemy import ForeignKey, String, Text, Uuid
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db import Base
@@ -27,3 +27,17 @@ class Department(Base):
     )
 
     hospital: Mapped["Hospital"] = relationship(back_populates="departments")
+    meetings: Mapped[list["Meeting"]] = relationship(back_populates="department")
+
+
+class Meeting(Base):
+    __tablename__ = "meetings"
+
+    id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True, default=uuid.uuid4)
+    title: Mapped[str] = mapped_column(String, nullable=False)
+    transcript: Mapped[str] = mapped_column(Text, default="", nullable=False)
+    department_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("departments.id"), nullable=False
+    )
+
+    department: Mapped["Department"] = relationship(back_populates="meetings")

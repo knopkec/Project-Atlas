@@ -71,3 +71,44 @@ def get_department(department_id: uuid.UUID, db: Session = Depends(get_db)):
     if department is None:
         raise HTTPException(status_code=404, detail="Department not found")
     return department
+
+
+@router.post(
+    "/departments/{department_id}/meetings",
+    response_model=schemas.MeetingRead,
+    status_code=201,
+)
+def create_meeting(
+    department_id: uuid.UUID,
+    payload: schemas.MeetingCreate,
+    db: Session = Depends(get_db),
+):
+    if db.get(models.Department, department_id) is None:
+        raise HTTPException(status_code=404, detail="Department not found")
+    meeting = models.Meeting(
+        title=payload.title, transcript=payload.transcript, department_id=department_id
+    )
+    db.add(meeting)
+    db.commit()
+    db.refresh(meeting)
+    return meeting
+
+
+@router.get(
+    "/departments/{department_id}/meetings",
+    response_model=list[schemas.MeetingRead],
+)
+def list_meetings(department_id: uuid.UUID, db: Session = Depends(get_db)):
+    if db.get(models.Department, department_id) is None:
+        raise HTTPException(status_code=404, detail="Department not found")
+    return db.scalars(
+        select(models.Meeting).where(models.Meeting.department_id == department_id)
+    ).all()
+
+
+@router.get("/meetings/{meeting_id}", response_model=schemas.MeetingRead)
+def get_meeting(meeting_id: uuid.UUID, db: Session = Depends(get_db)):
+    meeting = db.get(models.Meeting, meeting_id)
+    if meeting is None:
+        raise HTTPException(status_code=404, detail="Meeting not found")
+    return meeting
