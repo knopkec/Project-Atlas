@@ -1,0 +1,3 @@
+# Manual structured extraction behind a seam
+
+Extraction of Problems, Workflows, Stakeholders, and Adoption Risks from a Meeting's transcript is **manual structured entry** in the prototype: the consultant records them directly. We place that entry behind a clearly-defined extraction seam so a future AI/LLM extractor can be swapped in without touching the rest of the model. Chosen deliberately against "just wire up LLM extraction now" — the product's long-term goal is to become an AI implementation consultant, but automated extraction is that evolution's arrival point, not the prototype's. The seam is what lets that evolution happen without a rewrite.

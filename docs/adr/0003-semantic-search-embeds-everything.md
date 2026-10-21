@@ -1,0 +1,3 @@
+# Semantic search embeds everything
+
+pgvector embeddings are produced for **everything** — meetings, transcripts, problems, workflows, stakeholders, and lessons learned — not just the reusable knowledge. Chosen because identifying repeating patterns requires the full context: the value of "show similar departments" and "how was this handled elsewhere?" is that the whole trail is searchable. Department similarity is derived from the embeddings of the entities that reference it (no separate profile to keep in sync), optionally biased by a one-line summary a consultant can maintain. Lessons link back to their source entities (many-to-many) so results carry evidence.
